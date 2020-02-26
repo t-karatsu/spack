@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import re
+import llnl.util.lang
 import spack.compiler
 
 
