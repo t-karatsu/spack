@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 import spack.compiler
 
 
@@ -26,7 +27,7 @@ class Fj(spack.compiler.Compiler):
                   'fc': 'fj/frt'}
 
     version_argument = '--version'
-    version_regex = r'\((?:FCC|FRT)\) ([\d.]+)'
+    version_regex = r'\((?:FCC|FRT)\) ([\d. ]+)'
 
     required_libs = ['libfj90i', 'libfj90f', 'libfjsrcinfo']
 
@@ -61,6 +62,12 @@ class Fj(spack.compiler.Compiler):
     @property
     def pic_flag(self):
         return "-KPIC"
+
+    @classmethod
+    @llnl.util.lang.memoized
+    def extract_version_from_output(cls, output):
+        match = re.search(cls.version_regex, output)
+        return match.group(1).replace(' ', '-') if match else 'unknown'
 
     def setup_custom_environment(self, pkg, env):
         env.append_flags('fcc_ENV', '-Nclang')
