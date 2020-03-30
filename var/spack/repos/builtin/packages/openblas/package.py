@@ -101,6 +101,17 @@ class Openblas(MakefilePackage):
     conflicts('+consistent_fpcsr', when='threads=none',
               msg='FPCSR consistency only applies to multithreading')
 
+    def flag_handler(self, name, flags):
+        spec = self.spec
+        if spec.satisfies('%fj'):
+            if not spec.satisfies('ldflags') or not spec.satisfies('ldlibs'):
+                raise ValueError(
+                    "Fujitsu compiler requires specifying ldflags "
+                    "and ldlibs variants for linking some libraries."
+                )
+
+        return (flags, None, None)
+
     @property
     def parallel(self):
         # unclear whether setting `-j N` externally was supported before 0.3
